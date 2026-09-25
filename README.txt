@@ -1,5 +1,5 @@
 NOT RIGHT
-Version 0.1.0-beta
+Version 1.0.0
 
 Hides every guild chat message containing "yeah right" (or "yeahright"),
 from anyone, including you. Matching is case-insensitive and ignores

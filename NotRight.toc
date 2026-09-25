@@ -1,7 +1,7 @@
 ## Interface: 120100
 ## Title: Not Right
 ## Notes: Hides every "yeah right" message from guild chat.
-## Version: 0.1.0-beta
+## Version: 1.0.0
 ## Category: Chat
 ## SavedVariables: NotRightDB
 
