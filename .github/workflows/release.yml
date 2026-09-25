@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version from TOC
+        id: version
+        run: |
+          version=$(grep -m1 '^## Version:' NotRight.toc | sed 's/^## Version:[[:space:]]*//' | tr -d '\r')
+          test -n "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Build zip
+        run: |
+          # Paths marked export-ignore in .gitattributes are left out.
+          git archive --format=zip --prefix=NotRight/ \
+            -o "NotRight-${{ steps.version.outputs.version }}.zip" HEAD
+          unzip -l "NotRight-${{ steps.version.outputs.version }}.zip"
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          tag="v$VERSION"
+          # Commits without a version bump replace that version's release so
+          # its zip and tag always match the latest commit on main.
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release delete "$tag" --cleanup-tag --yes
+          fi
+          gh release create "$tag" "NotRight-$VERSION.zip" \
+            --target "$GITHUB_SHA" \
+            --title "Not Right $VERSION" \
+            --generate-notes \
+            --latest
