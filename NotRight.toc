@@ -3,5 +3,6 @@
 ## Notes: Hides every "yeah right" message from guild chat.
 ## Version: 0.1.0-beta
 ## Category: Chat
+## SavedVariables: NotRightDB
 
 NotRight.lua
